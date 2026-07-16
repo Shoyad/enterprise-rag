@@ -32,7 +32,7 @@ flowchart TB
 
     redis[(Redis - arq queue)]
     pg[(PostgreSQL + pgvector)]
-    prov{{Embeddings: fastembed local / openai}}
+    prov{{Embeddings: fastembed (local, single impl)}}
     llm{{Generation: openai / anthropic - real providers, key required}}
 
     client --> docs --> redis --> parse --> chunk --> embed1 --> pg
@@ -66,15 +66,21 @@ flowchart TB
 - **Alternatives:** Pinecone, Weaviate, Qdrant (dedicated vector DBs).
 - **Trade-offs:** a dedicated vector DB scales further and ships hybrid search built-in;
   pgvector trades peak scale for radically simpler operations and no second service/bill.
-- **Limitations:** the `vector(N)` dimension is fixed per database; switching embedding
-  providers (384 ↔ 1536 dims) means a fresh volume and re-ingest.
+- **Limitations:** the `vector(N)` column dimension is fixed to the embedding model
+  (384 for `bge-small-en-v1.5`); changing models later requires re-embedding — acceptable
+  for a single-model system.
 
-### D2 — Local embeddings, real generation
-- **Why:** retrieval should work with zero keys so anyone can clone-and-run; answers must
-  be truthful, so generation uses a **real** provider — never a simulated one.
-- **Alternatives:** hosted embeddings only; or a fake/stub LLM for a keyless "demo".
-- **Trade-offs:** a stub LLM would make the repo look interactive without keys, but it
-  would be dishonest and useless as an engineering signal — rejected on purpose.
+### D2 — One local embeddings implementation, real generation
+- **Why:** retrieval should work with zero keys so anyone can clone-and-run, so embeddings
+  use a single local model (FastEmbed). Answers must be truthful, so generation uses a
+  **real** provider — never a simulated one.
+- **Alternatives:** a multi-provider embeddings abstraction (local + OpenAI); or a
+  fake/stub LLM for a keyless "demo".
+- **Trade-offs:** multiple embedding providers with different vector dimensions add config
+  surface and a re-ingest footgun for no current benefit — rejected as premature (a minimal
+  `Protocol` seam is kept so a second provider *can* be added when actually needed). A stub
+  LLM would look interactive without keys but would be dishonest and useless as an
+  engineering signal — rejected on purpose.
 - **Limitations:** generated answers require an OpenAI or Anthropic key; without one the
   API returns a configuration error (ingestion and retrieval still work).
 
