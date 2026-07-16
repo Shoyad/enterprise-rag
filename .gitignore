@@ -1,0 +1,23 @@
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+.mypy_cache/
+.ruff_cache/
+.pytest_cache/
+*.egg-info/
+dist/
+build/
+
+# Env / secrets
+.env
+*.local
+
+# Models / caches downloaded at runtime
+.fastembed_cache/
+.cache/
+
+# OS / editor
+.DS_Store
+.idea/
+.vscode/
