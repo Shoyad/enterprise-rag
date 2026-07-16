@@ -15,13 +15,7 @@ from .redis_client import close_redis
 @asynccontextmanager
 async def lifespan(app: FastAPI) -> AsyncIterator[None]:
     configure_logging()
-    settings = get_settings()
-    get_logger("app").info(
-        "app.startup",
-        version=settings.app_version,
-        embeddings_provider=settings.embeddings_provider,
-        generation_provider=settings.generation_provider or "unset",
-    )
+    get_logger("app").info("app.startup", version=get_settings().app_version)
     yield
     await dispose_engine()
     await close_redis()
