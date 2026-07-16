@@ -10,8 +10,8 @@ or credentials**. The demo runs on a generated, fictional enterprise knowledge b
 ## Current Status
 
 - ✅ Repository architecture
-- 🚧 Backend bootstrap
-- ⬜ Document ingestion
+- ✅ Backend bootstrap
+- 🚧 Document ingestion
 - ⬜ Chunking
 - ⬜ Embeddings
 - ⬜ Retrieval
